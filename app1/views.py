@@ -1,0 +1,63 @@
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from .serializers import RegisterSerializer, UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+
+class RegisterView(APIView):
+
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+
+        users = User.objects.all()
+        serializer = RegisterSerializer(users, many=True)
+        return Response({
+            'data': serializer.data,
+        })
+    
+    def post(self, request):
+
+        serializer = UserSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+            'message': 'User Created Successfully.',
+            'data': serializer.data,
+        }, status=201)
+
+        return Response({
+            'data': serializer.errors,
+        }, status=400)
+
+class LoginView(APIView):
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        user = User.objects.filter(username= username).first()
+
+        if user and user.check_password(password):
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                "message": "Login Successfully.",
+                "userId": user.id,
+                "refresh": str(refresh), 
+                "access": str(refresh.access_token), 
+            })
+        
+        return Response({
+            'message': "Invalid Cerdentials.",
+        }, status=400)
+    
+
+class UserDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user = RegisterSerializer(user)
+        return Response({"user" : user.data})
