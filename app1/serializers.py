@@ -1,14 +1,14 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-class RegisterSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
         # fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     c_password = serializers.CharField(write_only=True)
     # Note : "write_only=True" means it take data from client to do operations in DB but not to return  
 

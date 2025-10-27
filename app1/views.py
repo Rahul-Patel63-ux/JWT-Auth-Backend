@@ -3,22 +3,28 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from .serializers import RegisterSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-class RegisterView(APIView):
+class ListCreateView(APIView):
 
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [AllowAny()]
+        return [IsAuthenticated()]
+    
+    
     def get(self, request):
-
         users = User.objects.all()
-        serializer = RegisterSerializer(users, many=True)
+        serializer = UserSerializer(users, many=True)
         return Response({
             'data': serializer.data,
         })
     
+
     def post(self, request):
 
-        serializer = UserSerializer(data=request.data)
+        serializer = RegisterSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
