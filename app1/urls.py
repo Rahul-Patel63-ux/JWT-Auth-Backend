@@ -18,7 +18,7 @@ from django.urls import path
 from .views import ListCreateView, LoginView, UserDetailsView
 
 urlpatterns = [
-    path('register/', ListCreateView    .as_view(), name='register'),
+    path('register/', ListCreateView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
-    path('data/', UserDetailsView.as_view(), name='data'),
+    path('user/', UserDetailsView.as_view(), name='user'),
 ]

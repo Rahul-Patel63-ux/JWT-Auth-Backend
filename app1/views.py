@@ -18,7 +18,7 @@ class ListCreateView(APIView):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response({
-            'data': serializer.data,
+            'users': serializer.data,
         })
     
 
@@ -30,11 +30,11 @@ class ListCreateView(APIView):
             serializer.save()
             return Response({
             'message': 'User Created Successfully.',
-            'data': serializer.data,
+            'user': serializer.data,
         }, status=201)
 
         return Response({
-            'data': serializer.errors,
+            'error': serializer.errors,
         }, status=400)
 
 class LoginView(APIView):
